@@ -1,0 +1,8 @@
+hash: 4630d51fdfd8263a918c3b29ae23ab651898ff183d3d6db0981bc4685d699c38
+updated: 2017-02-21T00:25:27.538577394+07:00
+imports:
+- name: github.com/pressly/chi
+  version: 54f435d539226571eab1987ed862b1c0fdfdc892
+- name: go.uber.org/zap
+  version: 72313cde80537dd4dc9b7b80eda6d7ed796c4232
+testImports: []

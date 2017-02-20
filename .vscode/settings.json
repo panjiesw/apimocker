@@ -1,0 +1,26 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "editor.renderWhitespace": "boundary",
+  "editor.insertSpaces": false,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": true,
+  "editor.wrappingColumn": 140,
+  "editor.rulers": [
+    140
+  ],
+  "editor.wordWrap": true,
+  "editor.formatOnPaste": true,
+  "editor.snippetSuggestions": "top",
+  "files.insertFinalNewline": true,
+  "go.buildOnSave": true,
+  "go.lintOnSave": true,
+  "go.lintTool": "golint",
+  "go.lintFlags": [
+    "$(go list ./... | grep -v vendor)"
+  ],
+  "go.formatTool": "goreturns",
+  "go.gocodeAutoBuild": true,
+  "go.autocompleteUnimportedPackages": true,
+  "licenser.author": "Panjie Setiawan Wicaksono",
+  "licenser.license": "MIT"
+}

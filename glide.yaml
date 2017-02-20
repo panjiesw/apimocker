@@ -1,0 +1,6 @@
+package: github.com/panjiesw/apimocker
+import:
+- package: github.com/pressly/chi
+  version: ^2.0.0
+- package: go.uber.org/zap
+  version: ^1.0.0-rc.1
