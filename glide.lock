@@ -1,8 +1,10 @@
-hash: 4630d51fdfd8263a918c3b29ae23ab651898ff183d3d6db0981bc4685d699c38
-updated: 2017-02-21T00:25:27.538577394+07:00
+hash: 9ba93746957f84ba9094dc7c3792a9bb345ec2f30306b73e406b122a336a477c
+updated: 2017-02-21T01:14:57.897308255+07:00
 imports:
 - name: github.com/pressly/chi
   version: 54f435d539226571eab1987ed862b1c0fdfdc892
+- name: github.com/valyala/fasttemplate
+  version: d090d65668a286d9a180d43a19dfdc5dcad8fe88
 - name: go.uber.org/zap
   version: 72313cde80537dd4dc9b7b80eda6d7ed796c4232
 testImports: []

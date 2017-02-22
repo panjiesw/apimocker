@@ -16,7 +16,6 @@
   "go.lintOnSave": true,
   "go.lintTool": "golint",
   "go.lintFlags": [
-    "$(go list ./... | grep -v vendor)"
   ],
   "go.formatTool": "goreturns",
   "go.gocodeAutoBuild": true,
