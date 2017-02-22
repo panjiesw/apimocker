@@ -21,3 +21,13 @@ func GenStrSentence() string {
 func GenStrSentenceRange(min, max int) string {
 	return lorem.Sentence(min, max)
 }
+
+// GenStrParagraph generate random paragraph with sentence count in default range (5, 10)
+func GenStrParagraph() string {
+	return lorem.Paragraph(5, 10)
+}
+
+// GenStrParagraphRange generate random paragraph with sentence count in range of min-max
+func GenStrParagraphRange(min, max int) string {
+	return lorem.Paragraph(min, max)
+}

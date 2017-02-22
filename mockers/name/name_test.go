@@ -1,12 +1,16 @@
-package name
+package name_test
 
-import "testing"
-import "strconv"
+import (
+	"strconv"
+	"testing"
+
+	"github.com/panjiesw/apimocker/mockers/name"
+)
 
 func TestFirstFemale(t *testing.T) {
 	for i := 1; i <= 100; i++ {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			t.Log(FirstFemale())
+			t.Log(name.FirstFemale())
 		})
 	}
 }
@@ -14,7 +18,7 @@ func TestFirstFemale(t *testing.T) {
 func TestFirstMale(t *testing.T) {
 	for i := 1; i <= 100; i++ {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			t.Log(FirstMale())
+			t.Log(name.FirstMale())
 		})
 	}
 }
@@ -22,7 +26,7 @@ func TestFirstMale(t *testing.T) {
 func TestSurename(t *testing.T) {
 	for i := 1; i <= 100; i++ {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			t.Log(Surename())
+			t.Log(name.Surename())
 		})
 	}
 }
@@ -30,7 +34,7 @@ func TestSurename(t *testing.T) {
 func TestFullname(t *testing.T) {
 	for i := 1; i <= 100; i++ {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			t.Log(Fullname())
+			t.Log(name.Fullname())
 		})
 	}
 }
