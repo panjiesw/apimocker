@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/mgutz/logxi/v1"
+	"github.com/panjiesw/apimocker/db"
 )
 
 var (
@@ -17,6 +18,7 @@ type RootCtx struct {
 type AdminCtx struct {
 	*RootCtx
 	P *Pagination
+	U *db.User
 }
 
 type contextKey struct {

@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"runtime/debug"
+
 	"github.com/mgutz/logxi/v1"
 )
 
@@ -16,37 +18,37 @@ type RequestLogger struct {
 
 // Trace logs a debug entry.
 func (l *RequestLogger) Trace(msg string, args ...interface{}) {
-	l.Logger.Trace(msg, append([]interface{}{"id", l.id}, args...)...)
+	l.Logger.Trace(msg, append([]interface{}{"req_id", l.id}, args...)...)
 }
 
 // Debug logs a debug entry.
 func (l *RequestLogger) Debug(msg string, args ...interface{}) {
-	l.Logger.Debug(msg, append([]interface{}{"id", l.id}, args...)...)
+	l.Logger.Debug(msg, append([]interface{}{"req_id", l.id}, args...)...)
 }
 
 // Info logs an info entry.
 func (l *RequestLogger) Info(msg string, args ...interface{}) {
-	l.Logger.Info(msg, append([]interface{}{"id", l.id}, args...)...)
+	l.Logger.Info(msg, append([]interface{}{"req_id", l.id}, args...)...)
 }
 
 // Warn logs a warn entry.
 func (l *RequestLogger) Warn(msg string, args ...interface{}) error {
-	return l.Logger.Warn(msg, append([]interface{}{"id", l.id}, args...)...)
+	return l.Logger.Warn(msg, append([]interface{}{"req_id", l.id}, args...)...)
 }
 
 // Error logs an error entry.
 func (l *RequestLogger) Error(msg string, args ...interface{}) error {
-	return l.Logger.Error(msg, append([]interface{}{"id", l.id}, args...)...)
+	return l.Logger.Error(msg, append([]interface{}{"req_id", l.id}, args...)...)
 }
 
 // Fatal logs a fatal entry then panics.
 func (l *RequestLogger) Fatal(msg string, args ...interface{}) {
-	l.Logger.Fatal(msg, append([]interface{}{"id", l.id}, args...)...)
+	l.Logger.Fatal(msg, append([]interface{}{"req_id", l.id}, args...)...)
 }
 
 // Log logs a leveled entry.
 func (l *RequestLogger) Log(level int, msg string, args []interface{}) {
-	l.Logger.Log(level, msg, append([]interface{}{"id", l.id}, args...))
+	l.Logger.Log(level, msg, append([]interface{}{"req_id", l.id}, args...))
 }
 
 func (l *RequestLogger) Start(r *http.Request) {
@@ -64,7 +66,7 @@ func (l *RequestLogger) Start(r *http.Request) {
 		"user_agent", r.UserAgent(),
 		"uri", fmt.Sprintf("%s://%s%s", scheme, r.Host, r.RequestURI),
 	}...)
-	l.Info("request started", l.args...)
+	l.Info("started", l.args...)
 }
 
 func (l *RequestLogger) End(status, bytes int, elapsed time.Duration) {
@@ -73,7 +75,7 @@ func (l *RequestLogger) End(status, bytes int, elapsed time.Duration) {
 		"resp_bytes_length", bytes,
 		"resp_elasped_ms", float64(elapsed.Nanoseconds()) / 1000000.0,
 	}...)
-	l.Info("request end", l.args...)
+	l.Info("end", l.args...)
 }
 
 func NewRequestLogger(id string) *RequestLogger {
@@ -94,6 +96,12 @@ func (s *Server) LoggerMiddleware(next http.Handler) http.Handler {
 		t1 := time.Now()
 		defer func() {
 			t2 := time.Now()
+
+			// Recover and record stack traces in case of a panic
+			if rec := recover(); rec != nil {
+				logger.Error("that happens", "panic", fmt.Sprintf("%+v", rec), "stack", string(debug.Stack()))
+				http.Error(ww, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
 
 			// Log the entry, the request is complete.
 			logger.End(ww.Status(), ww.BytesWritten(), t2.Sub(t1))

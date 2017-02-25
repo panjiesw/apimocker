@@ -5,9 +5,9 @@ import (
 )
 
 type AError struct {
-	Type   string
-	Msg    string
-	Status int
+	Type   string `json:"type"`
+	Msg    string `json:"message"`
+	Status int    `json:"-"`
 }
 
 func (e *AError) Error() string {
@@ -22,4 +22,9 @@ var (
 	ErrEmailExists    = &AError{Type: "db", Msg: "email already exists", Status: 400}
 	ErrEmailNotExists = &AError{Type: "db", Msg: "email doesn't exist", Status: 404}
 	ErrIDNotExists    = &AError{Type: "db", Msg: "id doesn't exist", Status: 404}
+
+	ErrDBUnkown = &AError{Type: "db", Msg: "internal error", Status: 500}
+
+	ErrAuthNoToken      = &AError{Type: "auth", Msg: "no token", Status: 401}
+	ErrAuthInvalidToken = &AError{Type: "auth", Msg: "invalid token", Status: 401}
 )

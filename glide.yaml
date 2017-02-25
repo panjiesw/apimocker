@@ -8,3 +8,5 @@ import:
 - package: github.com/mgutz/logxi
   subpackages:
   - v1
+- package: github.com/SermoDigital/jose
+  version: ^1.1.0

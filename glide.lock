@@ -1,5 +1,5 @@
-hash: 0265ffa2177f9847cd8f4387ee0cea6e77a16dc6ce99357bc2b27b285be66e84
-updated: 2017-02-25T18:44:15.660267597+07:00
+hash: f0ae69f535b2155455940e19d08ce725e9bd4f7012112bbf79d95ab010d0dff1
+updated: 2017-02-26T03:59:01.042210179+07:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
@@ -17,6 +17,8 @@ imports:
   version: 54f435d539226571eab1987ed862b1c0fdfdc892
   subpackages:
   - render
+- name: github.com/SermoDigital/jose
+  version: f6df55f235c24f236d11dbcf665249a59ac2021f
 - name: github.com/valyala/bytebufferpool
   version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
 - name: github.com/valyala/fasttemplate
