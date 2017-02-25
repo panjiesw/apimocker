@@ -1,8 +1,9 @@
 package main
 
-import "github.com/panjiesw/apimocker/mockers"
+import "github.com/panjiesw/apimocker/server"
+import "net/http"
 
 func main() {
-	println(mockers.GenStrSentence())
-	println(mockers.GenNameFull())
+	s := server.New()
+	http.ListenAndServe(":3000", s)
 }

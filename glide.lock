@@ -1,10 +1,28 @@
-hash: 9ba93746957f84ba9094dc7c3792a9bb345ec2f30306b73e406b122a336a477c
-updated: 2017-02-21T01:14:57.897308255+07:00
+hash: 0265ffa2177f9847cd8f4387ee0cea6e77a16dc6ce99357bc2b27b285be66e84
+updated: 2017-02-25T18:44:15.660267597+07:00
 imports:
+- name: github.com/boltdb/bolt
+  version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+- name: github.com/mattn/go-colorable
+  version: 6c903ff4aa50920ca86087a280590b36b3152b9c
+- name: github.com/mattn/go-isatty
+  version: 66b8e73f3f5cda9f96b69efd03dd3d7fc4a5cdb8
+- name: github.com/mgutz/ansi
+  version: 9520e82c474b0a04dd04f8a40959027271bab992
+- name: github.com/mgutz/logxi
+  version: aebf8a7d67ab4625e0fd4a665766fef9a709161b
+  subpackages:
+  - v1
 - name: github.com/pressly/chi
   version: 54f435d539226571eab1987ed862b1c0fdfdc892
+  subpackages:
+  - render
+- name: github.com/valyala/bytebufferpool
+  version: e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7
 - name: github.com/valyala/fasttemplate
   version: d090d65668a286d9a180d43a19dfdc5dcad8fe88
-- name: go.uber.org/zap
-  version: 72313cde80537dd4dc9b7b80eda6d7ed796c4232
+- name: golang.org/x/sys
+  version: c200b10b5d5e122be351b67af224adc6128af5bf
+  subpackages:
+  - unix
 testImports: []
