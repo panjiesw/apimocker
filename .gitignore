@@ -6,3 +6,4 @@
 *.out
 .glide/
 build
+vendor
