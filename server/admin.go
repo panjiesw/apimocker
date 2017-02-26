@@ -25,9 +25,11 @@ func (s *Server) AddAdminCtx(next http.Handler) http.Handler {
 func (s *Server) adminRouter() chi.Router {
 	r := chi.NewRouter()
 	r.Use(s.AddAdminCtx)
-	// r.Use(s.AuthMiddleware)
+	r.Use(s.AuthMiddleware)
 	r.Use(s.PaginateMiddleware)
 	r.Get("/", s.Version)
+	r.Mount("/auth", s.adminAuthRoute())
+	r.Mount("/users", s.adminUserRoute())
 	return r
 }
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/panjiesw/apimocker/db"
 	"github.com/pressly/chi"
 )
@@ -14,12 +15,12 @@ type Server struct {
 }
 
 func New() *Server {
-	// d, err := db.Open("./testdb")
-	// if err != nil {
-	// 	panic(err)
-	// }
+	d, err := db.Open("./testdb")
+	if err != nil {
+		panic(err)
+	}
 	r := chi.NewRouter()
-	s := &Server{Mux: r}
+	s := &Server{Mux: r, DS: d}
 	s.initialize()
 	return s
 }
@@ -36,4 +37,8 @@ func (s *Server) AddRootCtx(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), RootCtxKey, &RootCtx{})
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func init() {
+	govalidator.SetFieldsRequiredByDefault(true)
 }

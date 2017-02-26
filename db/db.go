@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
+	"github.com/panjiesw/apimocker/errs"
 )
 
 var (
@@ -15,12 +16,12 @@ var (
 )
 
 type Datastore interface {
-	UserSave(u *User) error
-	UserUsernameExist(username string) (bool, error)
-	UserEmailExist(email string) (bool, error)
-	UserGetByUsername(username string) (*User, error)
-	UserGetByEmail(email string) (*User, error)
-	UserGetByID(id uint64) (*User, error)
+	UserSave(u *User) *errs.AError
+	UserUsernameExist(username string) (bool, *errs.AError)
+	UserEmailExist(email string) (bool, *errs.AError)
+	UserGetByUsername(username string) (*User, *errs.AError)
+	UserGetByEmail(email string) (*User, *errs.AError)
+	UserGetByID(id uint64) (*User, *errs.AError)
 }
 
 type DB struct {

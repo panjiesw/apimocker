@@ -27,20 +27,14 @@ func (s *Server) AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		if j != nil {
-			v := jws.NewValidator(ex, time.Duration(24)*time.Hour, 0, nil)
+			v := jws.NewValidator(ex, time.Duration(24)*7*time.Hour, 0, nil)
 			if e = j.Validate("somekey", crypto.SigningMethodHS512, v); e != nil {
 				actx.L.Error("failed to validate token", "error", e)
 				err = errs.ErrAuthInvalidToken
 			} else {
 				if subject, ok := j.Claims().Subject(); ok && subject != "" {
 					if u, e := s.DS.UserGetByUsername(subject); e != nil {
-						actx.L.Error("failed to find user", "error", e)
-						switch ee := e.(type) {
-						case *errs.AError:
-							err = ee
-						default:
-							err = errs.ErrDBUnkown
-						}
+						err = e
 					} else {
 						actx.U = u
 					}

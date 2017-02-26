@@ -15,8 +15,8 @@ type User struct {
 	Password string `json:"password"`
 }
 
-func (d *DB) UserSave(u *User) error {
-	err := d.Update(func(tx *bolt.Tx) error {
+func (d *DB) UserSave(u *User) *errs.AError {
+	if err := d.Update(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		uub := ub.Bucket(UserUsernameBucket)
 		ueb := ub.Bucket(UserEmailBucket)
@@ -24,13 +24,13 @@ func (d *DB) UserSave(u *User) error {
 		if ok, err := d.UserUsernameExist(u.Username); err != nil {
 			return err
 		} else if ok {
-			return errs.ErrUsernameExists
+			return errs.ErrDBUsernameExists
 		}
 
 		if ok, err := d.UserEmailExist(u.Email); err != nil {
 			return err
 		} else if ok {
-			return errs.ErrEmailExists
+			return errs.ErrDBEmailExists
 		}
 
 		id, err := ub.NextSequence()
@@ -58,37 +58,58 @@ func (d *DB) UserSave(u *User) error {
 		}
 
 		return nil
-	})
-	return err
+	}); err != nil {
+		switch e := err.(type) {
+		case *errs.AError:
+			return e
+		default:
+			return errs.New("db", e.Error(), 500)
+		}
+	}
+	return nil
 }
 
-func (d *DB) UserUsernameExist(username string) (exist bool, err error) {
-	err = d.View(func(tx *bolt.Tx) error {
+func (d *DB) UserUsernameExist(username string) (exist bool, err *errs.AError) {
+	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		uub := ub.Bucket(UserUsernameBucket)
 		if u := uub.Get([]byte(username)); u != nil {
 			exist = true
 		}
 		return nil
-	})
+	}); er != nil {
+		switch e := er.(type) {
+		case *errs.AError:
+			err = e
+		default:
+			err = errs.New("db", e.Error(), 500)
+		}
+	}
 	return
 }
 
-func (d *DB) UserEmailExist(email string) (exist bool, err error) {
-	err = d.View(func(tx *bolt.Tx) error {
+func (d *DB) UserEmailExist(email string) (exist bool, err *errs.AError) {
+	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		ueb := ub.Bucket(UserEmailBucket)
 		if u := ueb.Get([]byte(email)); u != nil {
 			exist = true
 		}
 		return nil
-	})
+	}); er != nil {
+		switch e := er.(type) {
+		case *errs.AError:
+			err = e
+		default:
+			err = errs.New("db", e.Error(), 500)
+		}
+	}
 	return
 }
 
-func (d *DB) UserGetByUsername(username string) (*User, error) {
+func (d *DB) UserGetByUsername(username string) (*User, *errs.AError) {
 	var user User
-	err := d.View(func(tx *bolt.Tx) error {
+	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		uub := ub.Bucket(UserUsernameBucket)
 		if u := uub.Get([]byte(username)); u != nil {
@@ -96,16 +117,23 @@ func (d *DB) UserGetByUsername(username string) (*User, error) {
 				return err
 			}
 		} else {
-			return errs.ErrUsernameNotExists
+			return errs.ErrDBUsernameNotExists
 		}
 		return nil
-	})
-	return &user, err
+	}); er != nil {
+		switch e := er.(type) {
+		case *errs.AError:
+			return nil, e
+		default:
+			return nil, errs.New("db", e.Error(), 500)
+		}
+	}
+	return &user, nil
 }
 
-func (d *DB) UserGetByEmail(email string) (*User, error) {
+func (d *DB) UserGetByEmail(email string) (*User, *errs.AError) {
 	var user User
-	err := d.View(func(tx *bolt.Tx) error {
+	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		ueb := ub.Bucket(UserEmailBucket)
 		if u := ueb.Get([]byte(email)); u != nil {
@@ -113,25 +141,39 @@ func (d *DB) UserGetByEmail(email string) (*User, error) {
 				return err
 			}
 		} else {
-			return errs.ErrEmailNotExists
+			return errs.ErrDBEmailNotExists
 		}
 		return nil
-	})
-	return &user, err
+	}); er != nil {
+		switch e := er.(type) {
+		case *errs.AError:
+			return nil, e
+		default:
+			return nil, errs.New("db", e.Error(), 500)
+		}
+	}
+	return &user, nil
 }
 
-func (d *DB) UserGetByID(id uint64) (*User, error) {
+func (d *DB) UserGetByID(id uint64) (*User, *errs.AError) {
 	var user User
-	err := d.View(func(tx *bolt.Tx) error {
+	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		if u := ub.Get(Itob(id)); u != nil {
 			if err := json.Unmarshal(u, &user); err != nil {
 				return err
 			}
 		} else {
-			return errs.ErrIDNotExists
+			return errs.ErrDBIDNotExists
 		}
 		return nil
-	})
-	return &user, err
+	}); er != nil {
+		switch e := er.(type) {
+		case *errs.AError:
+			return nil, e
+		default:
+			return nil, errs.New("db", e.Error(), 500)
+		}
+	}
+	return &user, nil
 }
