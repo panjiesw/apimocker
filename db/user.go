@@ -107,14 +107,15 @@ func (d *DB) UserEmailExist(email string) (exist bool, err *errs.AError) {
 	return
 }
 
-func (d *DB) UserGetByUsername(username string) (*User, *errs.AError) {
-	var user User
+func (d *DB) UserGetByUsername(username string, user *User) *errs.AError {
 	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		uub := ub.Bucket(UserUsernameBucket)
-		if u := uub.Get([]byte(username)); u != nil {
-			if err := json.Unmarshal(u, &user); err != nil {
-				return err
+		if uid := uub.Get([]byte(username)); uid != nil {
+			if u := ub.Get(uid); u != nil {
+				if err := json.Unmarshal(u, user); err != nil {
+					return err
+				}
 			}
 		} else {
 			return errs.ErrDBUsernameNotExists
@@ -123,22 +124,23 @@ func (d *DB) UserGetByUsername(username string) (*User, *errs.AError) {
 	}); er != nil {
 		switch e := er.(type) {
 		case *errs.AError:
-			return nil, e
+			return e
 		default:
-			return nil, errs.New("db", e.Error(), 500)
+			return errs.New("db", e.Error(), 500)
 		}
 	}
-	return &user, nil
+	return nil
 }
 
-func (d *DB) UserGetByEmail(email string) (*User, *errs.AError) {
-	var user User
+func (d *DB) UserGetByEmail(email string, user *User) *errs.AError {
 	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		ueb := ub.Bucket(UserEmailBucket)
-		if u := ueb.Get([]byte(email)); u != nil {
-			if err := json.Unmarshal(u, &user); err != nil {
-				return err
+		if uid := ueb.Get([]byte(email)); uid != nil {
+			if u := ub.Get(uid); u != nil {
+				if err := json.Unmarshal(u, &user); err != nil {
+					return err
+				}
 			}
 		} else {
 			return errs.ErrDBEmailNotExists
@@ -147,16 +149,15 @@ func (d *DB) UserGetByEmail(email string) (*User, *errs.AError) {
 	}); er != nil {
 		switch e := er.(type) {
 		case *errs.AError:
-			return nil, e
+			return e
 		default:
-			return nil, errs.New("db", e.Error(), 500)
+			return errs.New("db", e.Error(), 500)
 		}
 	}
-	return &user, nil
+	return nil
 }
 
-func (d *DB) UserGetByID(id uint64) (*User, *errs.AError) {
-	var user User
+func (d *DB) UserGetByID(id uint64, user *User) *errs.AError {
 	if er := d.View(func(tx *bolt.Tx) error {
 		ub := tx.Bucket(UserBucket)
 		if u := ub.Get(Itob(id)); u != nil {
@@ -170,10 +171,10 @@ func (d *DB) UserGetByID(id uint64) (*User, *errs.AError) {
 	}); er != nil {
 		switch e := er.(type) {
 		case *errs.AError:
-			return nil, e
+			return e
 		default:
-			return nil, errs.New("db", e.Error(), 500)
+			return errs.New("db", e.Error(), 500)
 		}
 	}
-	return &user, nil
+	return nil
 }

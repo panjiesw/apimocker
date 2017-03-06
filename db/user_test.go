@@ -1,6 +1,7 @@
 package db_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/panjiesw/apimocker/db"
@@ -119,101 +120,116 @@ func TestDB_UserEmailExist(t *testing.T) {
 	}
 }
 
-// func TestDB_UserGetByUsername(t *testing.T) {
-// 	type fields struct {
-// 		DB *bolt.DB
-// 	}
-// 	type args struct {
-// 		username string
-// 	}
-// 	tests := []struct {
-// 		name    string
-// 		fields  fields
-// 		args    args
-// 		want    *db.User
-// 		wantErr bool
-// 	}{
-// 	// TODO: Add test cases.
-// 	}
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			d := &db.DB{
-// 				DB: tt.fields.DB,
-// 			}
-// 			got, err := d.UserGetByUsername(tt.args.username)
-// 			if (err != nil) != tt.wantErr {
-// 				t.Errorf("DB.UserGetByUsername() error = %v, wantErr %v", err, tt.wantErr)
-// 				return
-// 			}
-// 			if !reflect.DeepEqual(got, tt.want) {
-// 				t.Errorf("DB.UserGetByUsername() = %v, want %v", got, tt.want)
-// 			}
-// 		})
-// 	}
-// }
+func TestDB_UserGetByUsername(t *testing.T) {
+	type args struct {
+		username string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *db.User
+		wantErr bool
+	}{
+		{
+			name:    "success",
+			args:    args{username: "user1"},
+			want:    &db.User{Username: "user1", Email: "user1@bar.com"},
+			wantErr: false,
+		},
+		{
+			name:    "doesn't success",
+			args:    args{username: "user2"},
+			want:    &db.User{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got db.User
+			err := d.UserGetByUsername(tt.args.username, &got)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DB.UserGetByUsername() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(&got, tt.want) {
+				t.Errorf("DB.UserGetByUsername() = %v, want %v", &got, tt.want)
+			}
+		})
+	}
+}
 
-// func TestDB_UserGetByEmail(t *testing.T) {
-// 	type fields struct {
-// 		DB *bolt.DB
-// 	}
-// 	type args struct {
-// 		email string
-// 	}
-// 	tests := []struct {
-// 		name    string
-// 		fields  fields
-// 		args    args
-// 		want    *db.User
-// 		wantErr bool
-// 	}{
-// 	// TODO: Add test cases.
-// 	}
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			d := &db.DB{
-// 				DB: tt.fields.DB,
-// 			}
-// 			got, err := d.UserGetByEmail(tt.args.email)
-// 			if (err != nil) != tt.wantErr {
-// 				t.Errorf("DB.UserGetByEmail() error = %v, wantErr %v", err, tt.wantErr)
-// 				return
-// 			}
-// 			if !reflect.DeepEqual(got, tt.want) {
-// 				t.Errorf("DB.UserGetByEmail() = %v, want %v", got, tt.want)
-// 			}
-// 		})
-// 	}
-// }
+func TestDB_UserGetByEmail(t *testing.T) {
+	type args struct {
+		email string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *db.User
+		wantErr bool
+	}{
+		{
+			name:    "success",
+			args:    args{email: "user1@bar.com"},
+			want:    &db.User{Username: "user1", Email: "user1@bar.com"},
+			wantErr: false,
+		},
+		{
+			name:    "doesn't success",
+			args:    args{email: "user2"},
+			want:    &db.User{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got db.User
+			err := d.UserGetByEmail(tt.args.email, &got)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DB.UserGetByEmail() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(&got, tt.want) {
+				t.Errorf("DB.UserGetByEmail() = %v, want %v", &got, tt.want)
+			}
+		})
+	}
+}
 
-// func TestDB_UserGetByID(t *testing.T) {
-// 	type fields struct {
-// 		DB *bolt.DB
-// 	}
-// 	type args struct {
-// 		id uint64
-// 	}
-// 	tests := []struct {
-// 		name    string
-// 		fields  fields
-// 		args    args
-// 		want    *db.User
-// 		wantErr bool
-// 	}{
-// 	// TODO: Add test cases.
-// 	}
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			d := &db.DB{
-// 				DB: tt.fields.DB,
-// 			}
-// 			got, err := d.UserGetByID(tt.args.id)
-// 			if (err != nil) != tt.wantErr {
-// 				t.Errorf("DB.UserGetByID() error = %v, wantErr %v", err, tt.wantErr)
-// 				return
-// 			}
-// 			if !reflect.DeepEqual(got, tt.want) {
-// 				t.Errorf("DB.UserGetByID() = %v, want %v", got, tt.want)
-// 			}
-// 		})
-// 	}
-// }
+func TestDB_UserGetByID(t *testing.T) {
+	type args struct {
+		id uint64
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *db.User
+		wantErr bool
+	}{
+		{
+			name:    "success",
+			args:    args{id: uint64(1000)},
+			want:    &db.User{Username: "user1", Email: "user1@bar.com"},
+			wantErr: false,
+		},
+		{
+			name:    "doesn't success",
+			args:    args{id: uint64(1001)},
+			want:    &db.User{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got db.User
+			err := d.UserGetByID(tt.args.id, &got)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DB.UserGetByID() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(&got, tt.want) {
+				t.Errorf("DB.UserGetByID() = %v, want %v", &got, tt.want)
+			}
+		})
+	}
+}

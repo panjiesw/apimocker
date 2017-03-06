@@ -15,13 +15,15 @@ type testDBAdminUser struct {
 	*testDB
 }
 
-func (t *testDBAdminUser) UserGetByID(id uint64) (*db.User, *errs.AError) {
+func (t *testDBAdminUser) UserGetByID(id uint64, user *db.User) *errs.AError {
 	if id == uint64(1) {
-		return &db.User{Username: "foo", Email: "foo@bar.com"}, nil
+		user.Username = "foo"
+		user.Email = "foo@bar.com"
+		return nil
 	} else if id == uint64(2) {
-		return nil, errs.ErrDBIDNotExists
+		return errs.ErrDBIDNotExists
 	}
-	return nil, errs.ErrDBUnkown
+	return errs.ErrDBUnkown
 }
 
 func TestServer_UserByID(t *testing.T) {

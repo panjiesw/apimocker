@@ -7,6 +7,7 @@ import (
 
 	"github.com/SermoDigital/jose/crypto"
 	"github.com/SermoDigital/jose/jws"
+	"github.com/panjiesw/apimocker/db"
 	"github.com/panjiesw/apimocker/errs"
 	"github.com/pressly/chi/render"
 )
@@ -43,11 +44,12 @@ func (s *Server) parseAndValidateToken(actx *AdminCtx, r *http.Request, ex jws.C
 		}
 
 		if subject, ok := j.Claims().Subject(); ok && subject != "" {
-			u, err := s.DS.UserGetByUsername(subject)
+			var user db.User
+			err := s.DS.UserGetByUsername(subject, &user)
 			if err != nil {
 				return err
 			}
-			actx.U = u
+			actx.U = &user
 		} else {
 			actx.L.Error("failed to subject", "subject", subject, "ok", ok)
 			return errs.ErrAuthInvalidToken

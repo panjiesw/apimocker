@@ -19,9 +19,9 @@ type Datastore interface {
 	UserSave(u *User) *errs.AError
 	UserUsernameExist(username string) (bool, *errs.AError)
 	UserEmailExist(email string) (bool, *errs.AError)
-	UserGetByUsername(username string) (*User, *errs.AError)
-	UserGetByEmail(email string) (*User, *errs.AError)
-	UserGetByID(id uint64) (*User, *errs.AError)
+	UserGetByUsername(username string, user *User) *errs.AError
+	UserGetByEmail(email string, user *User) *errs.AError
+	UserGetByID(id uint64, user *User) *errs.AError
 }
 
 type DB struct {

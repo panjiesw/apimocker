@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/panjiesw/apimocker/db"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/render"
 )
@@ -24,9 +25,10 @@ func (s *Server) AdminUserByID(w http.ResponseWriter, r *http.Request) {
 		RenderAError(w, r, err)
 		return
 	}
-	if u, err := s.DS.UserGetByID(uint64(id)); err != nil {
+	var user db.User
+	if err := s.DS.UserGetByID(uint64(id), &user); err != nil {
 		RenderAError(w, r, err)
 	} else {
-		render.JSON(w, r, u)
+		render.JSON(w, r, &user)
 	}
 }

@@ -22,14 +22,14 @@ func (t *testDB) UserUsernameExist(username string) (bool, *errs.AError) {
 func (t *testDB) UserEmailExist(email string) (bool, *errs.AError) {
 	return false, nil
 }
-func (t *testDB) UserGetByUsername(username string) (*db.User, *errs.AError) {
-	return nil, nil
+func (t *testDB) UserGetByUsername(username string, user *db.User) *errs.AError {
+	return nil
 }
-func (t *testDB) UserGetByEmail(email string) (*db.User, *errs.AError) {
-	return nil, nil
+func (t *testDB) UserGetByEmail(email string, user *db.User) *errs.AError {
+	return nil
 }
-func (t *testDB) UserGetByID(id uint64) (*db.User, *errs.AError) {
-	return nil, nil
+func (t *testDB) UserGetByID(id uint64, user *db.User) *errs.AError {
+	return nil
 }
 
 func addTestRootCtx(next http.Handler) http.Handler {

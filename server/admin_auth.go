@@ -40,12 +40,12 @@ func (s *Server) AdminAuthLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user *db.User
+	var user db.User
 	var err *errs.AError
 	if govalidator.IsEmail(form.Login) {
-		user, err = s.DS.UserGetByEmail(form.Login)
+		err = s.DS.UserGetByEmail(form.Login, &user)
 	} else {
-		user, err = s.DS.UserGetByUsername(form.Login)
+		err = s.DS.UserGetByUsername(form.Login, &user)
 	}
 
 	if err != nil {
@@ -67,7 +67,7 @@ func (s *Server) AdminAuthLogin(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, map[string]string{"token": token})
 }
 
-func (s *Server) generateToken(u *db.User) (string, *errs.AError) {
+func (s *Server) generateToken(u db.User) (string, *errs.AError) {
 	now := time.Now().Add(time.Duration(100) * time.Nanosecond)
 
 	claims := jws.Claims{}
