@@ -16,36 +16,9 @@ func (s *Server) AuthMiddleware(next http.Handler) http.Handler {
 	ex.SetAudience("http://localhost:3000")
 	ex.SetIssuer("apimocker")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var err *errs.AError
-
 		actx := r.Context().Value(AdminCtxKey).(*AdminCtx)
 
-		j, e := jws.ParseJWTFromRequest(r)
-		if e != nil {
-			actx.L.Error("failed to fetch jws", "error", e)
-			err = errs.ErrAuthNoToken
-		}
-
-		if j != nil {
-			v := jws.NewValidator(ex, time.Duration(24)*7*time.Hour, 0, nil)
-			if e = j.Validate("somekey", crypto.SigningMethodHS512, v); e != nil {
-				actx.L.Error("failed to validate token", "error", e)
-				err = errs.ErrAuthInvalidToken
-			} else {
-				if subject, ok := j.Claims().Subject(); ok && subject != "" {
-					if u, e := s.DS.UserGetByUsername(subject); e != nil {
-						err = e
-					} else {
-						actx.U = u
-					}
-				} else {
-					actx.L.Error("failed to subject", "subject", subject, "ok", ok)
-					err = errs.ErrAuthInvalidToken
-				}
-			}
-		}
-
-		if err != nil {
+		if err := s.parseAndValidateToken(actx, r, ex); err != nil {
 			render.Status(r, err.Status)
 			render.Respond(w, r, err)
 			return
@@ -53,4 +26,32 @@ func (s *Server) AuthMiddleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func (s *Server) parseAndValidateToken(actx *AdminCtx, r *http.Request, ex jws.Claims) *errs.AError {
+	j, e := jws.ParseJWTFromRequest(r)
+	if e != nil {
+		actx.L.Error("failed to fetch jws", "error", e)
+		return errs.ErrAuthNoToken
+	}
+
+	if j != nil {
+		v := jws.NewValidator(ex, time.Duration(24)*7*time.Hour, 0, nil)
+		if e = j.Validate("somekey", crypto.SigningMethodHS512, v); e != nil {
+			actx.L.Error("failed to validate token", "error", e)
+			return errs.ErrAuthInvalidToken
+		}
+
+		if subject, ok := j.Claims().Subject(); ok && subject != "" {
+			u, err := s.DS.UserGetByUsername(subject)
+			if err != nil {
+				return err
+			}
+			actx.U = u
+		} else {
+			actx.L.Error("failed to subject", "subject", subject, "ok", ok)
+			return errs.ErrAuthInvalidToken
+		}
+	}
+	return nil
 }

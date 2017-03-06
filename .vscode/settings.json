@@ -4,15 +4,15 @@
   "editor.insertSpaces": false,
   "editor.tabSize": 2,
   "editor.detectIndentation": true,
-  "editor.wrappingColumn": 140,
   "editor.rulers": [
     140
   ],
-  "editor.wordWrap": true,
+  "editor.wordWrap": "on",
   "editor.formatOnPaste": true,
   "editor.snippetSuggestions": "top",
   "files.insertFinalNewline": true,
   "go.buildOnSave": true,
+  "go.useLanguageServer": false,
   "go.lintOnSave": true,
   "go.lintTool": "golint",
   "go.lintFlags": [

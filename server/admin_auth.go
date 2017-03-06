@@ -15,6 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// LoginForm used to bind login body
 type LoginForm struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
