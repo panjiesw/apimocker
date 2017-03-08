@@ -9,11 +9,6 @@ import (
 	"github.com/pressly/chi/render"
 )
 
-type Pagination struct {
-	limit  int
-	offset int
-}
-
 func (s *Server) AddAdminCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		rctx := r.Context().Value(RootCtxKey).(*RootCtx)
@@ -35,5 +30,5 @@ func (s *Server) adminRouter() chi.Router {
 
 func (s *Server) Version(w http.ResponseWriter, r *http.Request) {
 	actx := r.Context().Value(AdminCtxKey).(*AdminCtx)
-	render.JSON(w, r, map[string]interface{}{"version": "1.0.0", "limit": actx.P.limit})
+	render.JSON(w, r, map[string]interface{}{"version": "1.0.0", "limit": actx.M.Limit})
 }

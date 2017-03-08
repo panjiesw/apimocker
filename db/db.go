@@ -13,6 +13,7 @@ var (
 	UserUsernameBucket = []byte("users.username")
 	UserEmailBucket    = []byte("users.email")
 	ProjectBucket      = []byte("projects")
+	comma              = []byte(",")
 )
 
 type Datastore interface {
@@ -22,6 +23,7 @@ type Datastore interface {
 	UserGetByUsername(username string, user *User) *errs.AError
 	UserGetByEmail(email string, user *User) *errs.AError
 	UserGetByID(id uint64, user *User) *errs.AError
+	UserList(wrapper *Wrapper) *errs.AError
 }
 
 type DB struct {

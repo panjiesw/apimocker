@@ -178,3 +178,39 @@ func (d *DB) UserGetByID(id uint64, user *User) *errs.AError {
 	}
 	return nil
 }
+
+func (d *DB) UserList(wrapper *Wrapper) *errs.AError {
+	if err := d.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(UserBucket)
+		c := b.Cursor()
+		var offset = wrapper.Meta.Offset
+		var us []User
+		var usb = []byte("[")
+
+		for k, v := c.First(); k != nil && len(us) < int(wrapper.Meta.Limit); k, v = c.Next() {
+			if offset <= uint(0) {
+				usb = append(usb, v...)
+				usb = append(usb, comma...)
+			}
+			offset--
+		}
+		usb = append(usb[:len(usb)-1], []byte("]")...)
+
+		if err := json.Unmarshal(usb, us); err != nil {
+			return err
+		}
+
+		wrapper.Data = us
+		wrapper.Meta.Count = uint(len(us))
+
+		return nil
+	}); err != nil {
+		switch e := err.(type) {
+		case *errs.AError:
+			return e
+		default:
+			return errs.New("db", e.Error(), 500)
+		}
+	}
+	return nil
+}

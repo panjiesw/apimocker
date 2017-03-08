@@ -3,12 +3,14 @@ package server
 import (
 	"net/http"
 	"strconv"
+
+	"github.com/panjiesw/apimocker/db"
 )
 
 func (s *Server) PaginateMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var limit = 20
-		var offset = 0
+		var limit = uint(20)
+		var offset = uint(0)
 
 		query := r.URL.Query()
 		limitStr := query.Get("limit")
@@ -16,19 +18,19 @@ func (s *Server) PaginateMiddleware(next http.Handler) http.Handler {
 
 		if limitStr != "" {
 			if l, err := strconv.Atoi(limitStr); err == nil {
-				limit = l
+				limit = uint(l)
 			}
 		}
 
 		if offsetStr != "" {
 			if o, err := strconv.Atoi(offsetStr); err == nil {
-				offset = o
+				offset = uint(o)
 			}
 		}
 
 		actx, _ := r.Context().Value(AdminCtxKey).(*AdminCtx)
 		if actx != nil {
-			actx.P = &Pagination{limit: limit, offset: offset}
+			actx.M = &db.Meta{Limit: limit, Offset: offset}
 		}
 
 		next.ServeHTTP(w, r)

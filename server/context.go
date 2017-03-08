@@ -17,7 +17,7 @@ type RootCtx struct {
 
 type AdminCtx struct {
 	*RootCtx
-	P *Pagination
+	M *db.Meta
 	U *db.User
 }
 
